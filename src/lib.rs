@@ -82,6 +82,15 @@ impl Throttle {
         self.deque.len()
     }
 
+    /// Checks that the throttle is availbale to accept.
+    ///
+    /// Pay attention to race conditions. If this returns true and the current context has a
+    /// mutable reference to the throttle, the availablity remains true within the context.
+    /// However, if this returns false, it is possible that this becomes true in the next line.
+    pub fn available(&mut self) -> bool {
+        self.size() < self.threshold
+    }
+
     /// Attempts to accept an operation and increment the throttle.
     ///
     /// On success, Ok is returned and the counter increments.
